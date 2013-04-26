@@ -21,6 +21,7 @@ Library
                      ,Data.RingBuffer.SeqBuffer
                      ,Data.RingBuffer.SVec
                      ,Data.RingBuffer.TGen
+                     ,Data.RingBuffer.Vector
 
   Build-depends:      base         >= 3      && < 5
                      ,containers   >= 0.3    && < 0.6
