@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
@@ -38,7 +39,11 @@ decTN sz nm elname binders =
   let fields = replicate sz (IsStrict, elname)
   in return [DataD [] nm binders [NormalC nm fields] []]
 
+#if MIN_VERSION_template_haskell(2,9,0)
+mkElInst tname elname = return [TySynInstD ''El $ TySynEqn [tname] (elname) ]
+#else
 mkElInst tname elname = return [TySynInstD ''El [tname] (elname) ]
+#endif
 
 mkInitInst vsz nm tname = let nmStr = show nm in [d| instance Initializable $(tname) where {-# INLINE newInit #-}; newInit el sz | sz >= 0 && sz <= vsz = $(appsE $ conE nm:replicate vsz [| el |]) ; newInit el sz = error ("cannot initialize " ++ nmStr ++ " with size: " ++ show sz) |]
 
