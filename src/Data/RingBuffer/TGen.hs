@@ -36,8 +36,13 @@ mkVec elname binders prefix sz = do
   return $ concat [d1,d2,d3,d4]
 
 decTN sz nm elname binders =
+#if MIN_VERSION_template_haskell(2,11,0)
+  let fields = replicate sz (Bang NoSourceUnpackedness SourceStrict, elname)
+  in return [DataD [] nm binders Nothing [NormalC nm fields] []]
+#else
   let fields = replicate sz (IsStrict, elname)
   in return [DataD [] nm binders [NormalC nm fields] []]
+#endif
 
 #if MIN_VERSION_template_haskell(2,9,0)
 mkElInst tname elname = return [TySynInstD ''El $ TySynEqn [tname] (elname) ]
